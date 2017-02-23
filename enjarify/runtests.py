@@ -32,7 +32,7 @@ def executeTest(name, opts):
     classes.update(STUB_FILES)
     writeToJar('out.jar', classes)
 
-    result = subprocess.check_output("java -Xss515m -jar out.jar a.a".split(),
+    result = subprocess.check_output("java -jar out.jar a.a".split(),
         stderr=subprocess.STDOUT,
         universal_newlines=True)
     expected = read(os.path.join(dir, 'expected.txt'), 'r')
