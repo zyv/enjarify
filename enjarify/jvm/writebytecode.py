@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from ..byteio import Writer
-from . import writeir, ir, error
-from .optimization import registers, jumps, stack, consts, options
+from . import writeir, ir
+from .optimization import registers, jumps, stack, consts
 
 def getCodeIR(pool, method, opts):
     if method.code is not None:
@@ -77,7 +77,7 @@ def finishCodeAttrs(pool, code_irs, opts):
 def writeCodeAttributeTail(pool, irdata, opts):
     method = irdata.method
     jumps.optimizeJumps(irdata)
-    bytecode, excepts = jumps.createBytecode(irdata)
+    bytecode, excepts = jumps.createBytecode(irdata, opts)
 
     stream = Writer()
     # For simplicity, don't bother calculating the actual maximum stack height
@@ -89,14 +89,6 @@ def writeCodeAttributeTail(pool, irdata, opts):
 
     stream.u32(len(bytecode))
     stream.write(bytecode)
-
-    if len(bytecode) > 65535:
-        # If code is too long and optimization is off, raise exception so we can
-        # retry with optimization. If it is still too long with optimization,
-        # don't raise an error, since a class with illegally long code is better
-        # than no output at all.
-        if opts is not options.ALL:
-            raise error.ClassfileLimitExceeded()
 
     # exceptions
     stream.u16(len(excepts))

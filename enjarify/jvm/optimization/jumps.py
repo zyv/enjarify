@@ -14,8 +14,9 @@
 
 import struct
 
-from .. import ir
+from .. import ir, error
 from ..jvmops import *
+from . import options
 
 def _calcMinimumPositions(instrs):
     posd = {}
@@ -54,7 +55,7 @@ def optimizeJumps(irdata):
         assert ins.min <= ins.max
         ins.max = ins.min
 
-def createBytecode(irdata):
+def createBytecode(irdata, opts):
     instrs = irdata.flat_instructions
     posd, end_pos = _calcMinimumPositions(instrs)
 
@@ -64,6 +65,16 @@ def createBytecode(irdata):
             ins.calcBytecode(posd, irdata.labels)
         bytecode += ins.bytecode
     assert len(bytecode) == end_pos
+
+
+    if len(bytecode) > 65535:
+        # If code is too long and optimization is off, raise exception so we can
+        # retry with optimization. If it is still too long with optimization,
+        # don't raise an error, since a class with illegally long code is better
+        # than no output at all.
+        if opts is not options.ALL:
+            raise error.ClassfileLimitExceeded()
+
 
     prev_instr_map = dict(zip(instrs[1:], instrs))
     packed_excepts = []
