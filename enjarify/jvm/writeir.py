@@ -161,6 +161,7 @@ class IRBlock:
         if jumps:
             self.add(ir.Switch(default, jumps))
         else:
+            self.u8(ir.POP)
             self.goto(default)
 
     def generateExceptLabels(self):
