@@ -40,10 +40,12 @@ By default, Enjarify will refuse to overwrite the output file if it already exis
 
 ### Why not dex2jar?
 
-Dex2jar is an older tool that also tries to translate Dalvik to Java bytecode. It works reasonable well most of the time, but a lot of obscure features or edge cases will cause it to fail or even silently produce incorrect results. By contrast, Enjarify is designed to work in as many cases as possible, even for code where Dex2jar would fail. Among other things, Enjarify correctly handles unicode class names, constants used as multiple types, implicit casts, exception handlers jumping into normal control flow, classes that reference too many constants, very long methods, exception handlers after a catchall handler, and static initial values of the wrong type.
+Dex2jar is an older tool that also tries to translate Dalvik to Java bytecode. It works reasonably well most of the time, but a lot of obscure features or edge cases will cause it to fail or even silently produce incorrect results. By contrast, Enjarify is designed to work in as many cases as possible, even for code where Dex2jar would fail. Among other things, Enjarify correctly handles unicode class names, constants used as multiple types, implicit casts, exception handlers jumping into normal control flow, classes that reference too many constants, very long methods, exception handlers after a catchall handler, and static initial values of the wrong type.
 
 
 ### Limitations
+
+Currently, only version 35 dex files are supported. This means that the Java 8 related bytecode features introduced in Android N, O, and P are not supported.
 
 Enjarify does not currently translate optional metadata such as sourcefile attributes, line numbers, and annotations.
 
